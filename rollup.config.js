@@ -5,7 +5,8 @@ import globals from 'rollup-plugin-node-globals'
 import { terser } from "rollup-plugin-terser"
 
 import babel from '@rollup/plugin-babel'
-import ts from '@rollup/plugin-typescript'
+// import ts from '@rollup/plugin-typescript' // this sh*t doesn't work
+import ts from 'rollup-plugin-typescript'
 
 import pkg from './package.json'
 
@@ -35,6 +36,7 @@ export default {
       preferBuiltins: false
     }),
 
+    babel({ extensions }),
     ts(),
     commonjs({
       include: ['node_modules/**/*'],
@@ -42,7 +44,6 @@ export default {
       namedExports:  {}
     }),
     builtins(),
-    babel({ extensions }),
     terser()
   ],
 

@@ -44,9 +44,9 @@ describe('RxDB Search', () => {
     try {
       await BroadcastChannel.clearNodeFolder()
       db = await createRxDatabase({
-        name: 'testdb',
+        name: 'searchtestdb',
         adapter: 'memory',
-        ignoreDuplicate: true
+        ignoreDuplicate: false
       })
     } catch (e) {
       console.error('could not create DB', e)
@@ -70,11 +70,26 @@ describe('RxDB Search', () => {
   })
 
   describe('Plugin init', () => {
-    test('idb is defined on rxdb', () => {
-      expect(db.idb).toBeDefined()
+    test('.si exists on collection', () => {
+      expect(collection.si).toBeDefined()
     })
     test('collection has search', () => {
       expect(collection.search).toBeDefined()
+    })
+  })
+
+  describe('Functional', () => {
+    test('.search()', async () => {
+      const results = await collection.search('10')
+      expect(results).toBeDefined()
+    })
+
+    test('.index()', async () => {
+      try {
+        await collection.index()
+      } catch (e) {
+        expect(e).toBeUndefined()
+      }
     })
   })
 

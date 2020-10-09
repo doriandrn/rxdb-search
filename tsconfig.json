@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "noUnusedLocals": true,
     "noImplicitAny": true,
+    "rootDir": "./",
     "declarationDir": "types",
     "declaration": true,
     "target": "es6",
@@ -21,8 +22,7 @@
     "paths": { },
     "types": [
       "node",
-      "jest",
-      "faker"
+      "jest"
     ],
     "strict": false,
     "sourceMap": true,

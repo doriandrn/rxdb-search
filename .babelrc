@@ -1,0 +1,13 @@
+{
+  "presets": [
+    ["@babel/env", {
+      "targets": {
+        "node": "7",
+        "browsers": ["IE 9"]
+      },
+      "modules": false
+    }],
+    "@babel/typescript"
+  ],
+  "plugins": []
+}
