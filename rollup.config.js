@@ -40,8 +40,7 @@ export default {
     ts(),
     commonjs({
       include: ['node_modules/**/*'],
-      ignore: ["conditional-runtime-dependency"],
-      namedExports:  {}
+      ignore: ["conditional-runtime-dependency"]
     }),
     builtins(),
     terser()
