@@ -1,6 +1,6 @@
 {
   "name": "rxdb-search",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "RxDB Plugin based on search-index implementation",
   "main": "dist/index.js",
   "scripts": {

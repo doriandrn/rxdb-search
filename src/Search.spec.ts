@@ -44,7 +44,7 @@ describe('RxDB Search', () => {
     try {
       await BroadcastChannel.clearNodeFolder()
       db = await createRxDatabase({
-        name: 'searchtestdb',
+        name: 'searchtestdb2',
         adapter: 'memory',
         ignoreDuplicate: false
       })
@@ -82,6 +82,7 @@ describe('RxDB Search', () => {
     test('.search()', async () => {
       const results = await collection.search('10')
       expect(results).toBeDefined()
+      expect(results.length).toBeGreaterThan(0)
     })
 
     test('.index()', async () => {

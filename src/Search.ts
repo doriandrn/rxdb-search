@@ -7,12 +7,8 @@ export default {
   prototypes: {
     RxCollection: (proto) => {
       proto.search = async function (input ?: string) {
-        const { si } = this
-        if (!si)
-          throw new Error('Search Index (search-index) is not.')
-
         try {
-          return await si.SEARCH(...(input.split(' ')))
+          return await this.si.SEARCH(...(input.split(' ')))
         } catch (e) {
           console.error('Error while searching: ', e)
         }
@@ -32,13 +28,12 @@ export default {
     },
 
     createRxDocument: function (doc: RxDocumentBase<any>) {
-      const { _data, collection: { si } } = doc
+      const { _data, collection } = doc
       try {
-        si.PUT([ {... _data } ])
+        collection.si.PUT([ {... _data } ])
       } catch (e) {
         console.error('Could not PUT', _data, e)
       }
     }
-
   }
-};
+}

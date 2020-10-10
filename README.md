@@ -7,6 +7,13 @@ Minimal search implementation plugin for RxDB based on [search-index](https://gi
 Default usage:
 
 ```js
+import { addRxPlugin } from 'rxdb'
+import rxdbSearch from 'rxdb-search'
+
+addRxPlugin(rxdbSearch)
+
+...
+
 const results = collection.search(query)
 ```
 
