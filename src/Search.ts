@@ -1,11 +1,11 @@
-import { RxCollection, RxDatabase, RxDocument, RxDocumentBase } from 'rxdb';
+import { RxCollection, RxDocument, RxDocumentBase } from 'rxdb';
 import si from 'search-index'
 
 export default {
   rxdb: true,
 
   prototypes: {
-    RxCollection: (proto) => {
+    RxCollection: (proto: RxCollection) => {
       proto.search = async function (input ?: string) {
         try {
           return await this.si.SEARCH(...(input.split(' ')))
@@ -17,6 +17,7 @@ export default {
       proto.index = async function () {
         const data = await this.find().exec()
         this.si.PUT(data.map((doc: RxDocument) => doc._data))
+        console.log('Done indexing.')
       }
     }
   },
