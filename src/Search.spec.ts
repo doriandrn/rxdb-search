@@ -146,7 +146,7 @@ describe('RxDB Search', () => {
 
       test('.index()', async () => {
         try {
-          await collection.indexSearchDocs()
+          await collection.index()
         } catch (e) {
           expect(e).toBeUndefined()
         }

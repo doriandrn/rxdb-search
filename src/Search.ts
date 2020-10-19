@@ -14,7 +14,7 @@ export default {
         }
       }
 
-      proto.indexSearchDocs = async function () {
+      proto.index = async function () {
         const data = await this.find().exec()
         this.si.PUT(data.map((doc: RxDocument) => doc._data))
         console.info('Done indexing', this.name)
