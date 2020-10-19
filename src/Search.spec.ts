@@ -4,15 +4,16 @@ import axios from 'axios'
 import BroadcastChannel from 'broadcast-channel'
 
 import Search from './Search'
+// import rimraf from 'rimraf'
 
 const type = 'string'
-
+const date = new Date()
 /**
  * Data provided by
  * https://github.com/fergiemcdowall/search-index/blob/master/test/data/naughties.json
  */
 const collectionCreatorFixture = {
-  name: 'naughties',
+  name: 'naughties' + date.getTime(),
   schema: {
     title: 'naughty',
     version: 0,
@@ -41,12 +42,13 @@ describe('RxDB Search', () => {
       console.error('could not add adapter / plugin', e)
     }
 
+    await BroadcastChannel.clearNodeFolder()
     try {
-      await BroadcastChannel.clearNodeFolder()
+
       db = await createRxDatabase({
-        name: 'searchtestdb2',
+        name: 'searchtestdb',
         adapter: 'memory',
-        ignoreDuplicate: false
+        ignoreDuplicate: true
       })
     } catch (e) {
       console.error('could not create DB', e)
@@ -60,13 +62,13 @@ describe('RxDB Search', () => {
 
     // Populate with data
     try {
-      const { data } = await axios.get('https://raw.githubusercontent.com/fergiemcdowall/search-index/master/test/data/naughties.json')
-      data.forEach(doc => collection.insert(doc))
-
-      await db.requestIdlePromise()
+      const resp = await axios.get('https://raw.githubusercontent.com/fergiemcdowall/search-index/master/test/data/naughties.json')
+      data = resp.data
     } catch (e) {
-      console.error(e)
+      console.error('could not fetch data', e)
     }
+
+    // await db.requestIdlePromise()
   })
 
   describe('Plugin init', () => {
@@ -79,18 +81,76 @@ describe('RxDB Search', () => {
   })
 
   describe('Functional', () => {
-    test('.search()', async () => {
-      const results = await collection.search('10')
-      expect(results).toBeDefined()
-      expect(results.length).toBeGreaterThan(0)
+    describe('CRUD', () => {
+      test('on remove', async () => {
+        const description = 'wtfyayo'
+        const doc = await collection.insert({
+          date: "2000/01/01",
+          description,
+          lang: "en",
+        })
+        await doc.remove()
+        await db.requestIdlePromise()
+        const r = await collection.search(description)
+
+        expect(r.length).toEqual(0)
+      })
+
+      test('on create', async () => {
+        const description = "Teststring"
+        await collection.insert(
+          {
+            date: "2000/01/01",
+            description,
+            lang: "en",
+          })
+        await db.requestIdlePromise()
+        const r = await collection.search(description)
+
+        expect(r.length).toBeGreaterThan(0)
+      })
+
+      test('on update', async () => {
+        const description = "blabla"
+        const newDesc = 'xxxooo'
+        const doc = await collection.insert(
+          {
+            date: "2000/01/01",
+            description,
+            lang: "en",
+          })
+        await doc.atomicSet('description', newDesc)
+        await db.requestIdlePromise()
+        const r = await collection.search(newDesc)
+
+        expect(r.length).toBeGreaterThan(0)
+      })
     })
 
-    test('.index()', async () => {
-      try {
-        await collection.index()
-      } catch (e) {
-        expect(e).toBeUndefined()
-      }
+    describe('API', () => {
+      beforeAll(async () => {
+        try {
+          await Promise.all(
+            data.map(async doc => await collection.insert(doc))
+          )
+        } catch (e) {
+          console.error('inserting docs failed', e)
+        }
+      })
+
+      test('.search()', async () => {
+        const results = await collection.search('10')
+        expect(results).toBeDefined()
+        expect(results.length).toBeGreaterThan(0)
+      })
+
+      test('.index()', async () => {
+        try {
+          await collection.indexSearchDocs()
+        } catch (e) {
+          expect(e).toBeUndefined()
+        }
+      })
     })
   })
 

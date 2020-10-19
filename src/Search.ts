@@ -14,10 +14,10 @@ export default {
         }
       }
 
-      proto.index = async function () {
+      proto.indexSearchDocs = async function () {
         const data = await this.find().exec()
         this.si.PUT(data.map((doc: RxDocument) => doc._data))
-        console.log('Done indexing.')
+        console.info('Done indexing', this.name)
       }
     }
   },
@@ -26,15 +26,15 @@ export default {
     createRxCollection: function (col: RxCollection) {
       const { name } = col
       col.si = si({ name })
+
+      // Collection hooks on update and remove
+      col.postRemove(({ _id }) => { col.si.DELETE([ _id ]) }, false)
+      col.postSave((data) => { col.si.PUT([ { ...data } ]) }, false)
     },
 
-    createRxDocument: function (doc: RxDocumentBase<any>) {
-      const { _data, collection } = doc
-      try {
-        collection.si.PUT([ {... _data } ])
-      } catch (e) {
-        console.error('Could not PUT', _data, e)
-      }
+    createRxDocument: async function (doc: RxDocumentBase<any>) {
+      const { _data, collection: { si } } = doc
+      if (si) await si.PUT([ {... _data } ])
     }
   }
 }
