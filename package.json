@@ -1,6 +1,6 @@
 {
   "name": "rxdb-search",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "RxDB Plugin based on search-index implementation",
   "main": "dist/index.js",
   "scripts": {
@@ -35,7 +35,6 @@
     "encoding-down": "^6.3.0",
     "jest": "^26.5.3",
     "pouchdb-adapter-memory": "^7.2.2",
-    "rimraf": "^3.0.2",
     "rollup": "^2.32.0",
     "rollup-plugin-browserify-transform": "^1.0.1",
     "rollup-plugin-node-builtins": "^2.1.2",
