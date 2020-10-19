@@ -23,7 +23,9 @@ export default {
     'pouchdb-adapter-http',
     'rxdb',
     'rxjs',
-    'mobx'
+    'mobx',
+    'level',
+    'encoding-down'
   ],
 
   plugins: [

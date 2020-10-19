@@ -27,14 +27,9 @@ export default {
       const { name } = col
       col.si = si({ name })
 
-      // Collection hooks on update and remove
-      col.postRemove(({ _id }) => { col.si.DELETE([ _id ]) }, false)
-      col.postSave((data) => { col.si.PUT([ { ...data } ]) }, false)
-    },
-
-    createRxDocument: async function (doc: RxDocumentBase<any>) {
-      const { _data, collection: { si } } = doc
-      if (si) await si.PUT([ {... _data } ])
+      col.postRemove( ({ _id }) => { col.si.DELETE([ _id ]) }, false )
+      col.postSave( (data) => { col.si.PUT([ { ...data } ]) }, false )
+      col.postInsert( (data) => { col.si.PUT([ { ...data } ]) }, false )
     }
   }
 }
