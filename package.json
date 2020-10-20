@@ -1,6 +1,6 @@
 {
   "name": "rxdb-search",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "RxDB Plugin based on search-index implementation",
   "main": "dist/index.js",
   "scripts": {
@@ -11,6 +11,7 @@
   "repository": "https://github.com/doriandrn/rxdb-search.git",
   "license": "MIT",
   "keywords": [
+    "rxdb-search",
     "rxdb",
     "search",
     "search-index",

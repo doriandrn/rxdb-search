@@ -1,3 +1,8 @@
+<a name="1.0.9"></a>
+1.0.9 (2020-10-20)
+
+- Fixed some typos in the docs, added new keyword;
+
 <a name="1.0.8"></a>
 1.0.8 (2020-10-20)
 
