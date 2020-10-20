@@ -1,12 +1,23 @@
-import { RxCollection, RxDocument, RxDocumentBase } from 'rxdb';
+import { RxCollection, RxDocument } from 'rxdb';
 import si from 'search-index'
+
+const filter = (raw: object, allowed: string[]) => {
+  if (allowed.length <= 1)
+    return { ... raw }
+
+  return Object.keys(raw)
+    .filter(key => allowed.includes(key))
+    .reduce((obj, key) => {
+      return { ...obj, [key]: raw[key] };
+    }, {});
+}
 
 export default {
   rxdb: true,
 
   prototypes: {
     RxCollection: (proto: RxCollection) => {
-      proto.search = async function (input ?: string) {
+      proto.search = async function (input : string) {
         try {
           return await this.si.SEARCH(...(input.split(' ')))
         } catch (e) {
@@ -24,12 +35,15 @@ export default {
 
   hooks: {
     createRxCollection: function (col: RxCollection) {
-      const { name } = col
-      col.si = si({ name })
+      if (!col.searchFields)
+        col.searchFields = []
 
+      const { name, searchFields, schema: { primaryPath } } = col
+
+      col.si = si({ name })
       col.postRemove( ({ _id }) => { col.si.DELETE([ _id ]) }, false )
-      col.postSave( (data) => { col.si.PUT([ { ...data } ]) }, false )
-      col.postInsert( (data) => { col.si.PUT([ { ...data } ]) }, false )
+      col.postSave( (data) => { col.si.PUT([ filter(data, [ primaryPath, ...searchFields ]) ]) }, false )
+      col.postInsert( (data) => { col.si.PUT([ filter(data, [ primaryPath, ...searchFields ]) ]) }, false )
     }
   }
 }

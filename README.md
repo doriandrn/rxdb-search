@@ -1,6 +1,6 @@
 # RxDB Search plugin
 
-Minimal search implementation plugin for RxDB based on [search-index](https://github.com/fergiemcdowall/search-index).
+Minimal full text search implementation plugin for RxDB based on [search-index](https://github.com/fergiemcdowall/search-index).
 
 ## API
 
@@ -11,6 +11,21 @@ import { addRxPlugin } from 'rxdb'
 import rxdbSearch from 'rxdb-search'
 
 addRxPlugin(rxdbSearch)
+
+/**
+ *  Additionally, you may set collection.searchFields (Array)
+ * after initing the collection with your desired fields' key to
+ * search and index on.
+ * If left empty (default), all fields are considered.
+ *
+ *  Note: '_id' or '_rev' fields are not neceessary
+ */
+
+collection.searchFields = ['name', 'description']
+
+// or, programatically, you could use .push
+collection.searchFields.push('field')
+
 
 ...
 
@@ -28,3 +43,5 @@ This is a costly operation and it should be done only once. Indexes add themselv
 `collection.si` can also be accessed for the complete [search-index API on the collection](https://github.com/fergiemcdowall/search-index/tree/master/docs).
 
 More to come soon! Stay tuned!
+
+Suggestions, feedback or PRs are welcome!

@@ -4,10 +4,10 @@ import axios from 'axios'
 import BroadcastChannel from 'broadcast-channel'
 
 import Search from './Search'
-// import rimraf from 'rimraf'
 
 const type = 'string'
 const date = new Date()
+
 /**
  * Data provided by
  * https://github.com/fergiemcdowall/search-index/blob/master/test/data/naughties.json
@@ -56,6 +56,8 @@ describe('RxDB Search', () => {
 
     try {
       collection = await db.collection(collectionCreatorFixture)
+      collection.searchFields.push('description')
+      // collection.searchFields = ['description']
     } catch (e) {
       console.error('could not make collection', e)
     }
@@ -68,7 +70,6 @@ describe('RxDB Search', () => {
       console.error('could not fetch data', e)
     }
 
-    // await db.requestIdlePromise()
   })
 
   describe('Plugin init', () => {
@@ -78,9 +79,43 @@ describe('RxDB Search', () => {
     test('collection has search', () => {
       expect(collection.search).toBeDefined()
     })
+
+    describe('options', () => {
+      describe('.searchFields', () => {
+        const description = 'Fertile grounds above'
+        const lang = 'test'
+        beforeAll(async () => {
+          await collection.insert(
+            {
+              date: "2000/01/01",
+              description,
+              lang,
+            })
+        })
+        beforeEach(async () => {
+          await db.requestIdlePromise()
+        })
+
+        test('has only description field data', async () => {
+          const dic = await collection.si.DICTIONARY()
+          expect(dic.length).toEqual(description.split(' ').length)
+
+          const r = await collection.search(`${dic[0]}`)
+          const r2 = await collection.search(lang)
+
+          expect(r.length).toBeGreaterThan(0)
+          expect(r2.length).toEqual(0)
+        })
+      })
+    })
   })
 
   describe('Functional', () => {
+
+    beforeEach(async () => {
+      await db.requestIdlePromise()
+    })
+
     describe('CRUD', () => {
       test('on remove', async () => {
         const description = 'wtfyayo'
