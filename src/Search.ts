@@ -25,10 +25,13 @@ export default {
         }
       }
 
-      proto.index = async function () {
-        const data = await this.find().exec()
-        this.si.PUT(data.map((doc: RxDocument) => doc._data))
-        console.info('Done indexing', this.name)
+      proto.index = async function (requestedDocs ?: string[]) {
+        let data = requestedDocs && requestedDocs.length ?
+          Array.from((await this.findByIds(requestedDocs)).values()) :
+          await this.find().exec()
+
+        await this.si.PUT(data.map((doc: RxDocument) => doc._data))
+        console.info(`Done indexing ${ data.length } documents on "${ this.name }"`)
       }
     }
   },

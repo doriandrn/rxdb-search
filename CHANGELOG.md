@@ -1,3 +1,9 @@
+<a name="1.0.10"></a>
+1.0.10 (2020-10-21)
+
+- Added the possibility to index documents by ids. This is an ideal scenario when using .bulkInsert() as the postInsert hook doesn't get triggered. Huge thanks to @marcoancona for suggesting this!
+- Fixed an async bug on PUT;
+
 <a name="1.0.9"></a>
 1.0.9 (2020-10-20)
 

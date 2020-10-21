@@ -4,6 +4,7 @@ import axios from 'axios'
 import BroadcastChannel from 'broadcast-channel'
 
 import Search from './Search'
+import { RxDatabaseBase } from 'rxdb/dist/types/rx-database'
 
 const type = 'string'
 const date = new Date()
@@ -43,8 +44,8 @@ describe('RxDB Search', () => {
     }
 
     await BroadcastChannel.clearNodeFolder()
-    try {
 
+    try {
       db = await createRxDatabase({
         name: 'searchtestdb',
         adapter: 'memory',
@@ -84,6 +85,7 @@ describe('RxDB Search', () => {
       describe('.searchFields', () => {
         const description = 'Fertile grounds above'
         const lang = 'test'
+
         beforeAll(async () => {
           await collection.insert(
             {
@@ -92,6 +94,7 @@ describe('RxDB Search', () => {
               lang,
             })
         })
+
         beforeEach(async () => {
           await db.requestIdlePromise()
         })
@@ -166,7 +169,9 @@ describe('RxDB Search', () => {
       beforeAll(async () => {
         try {
           await Promise.all(
-            data.map(async doc => await collection.insert(doc))
+            data
+              .filter((undefined, i) => i < 100)
+              .map(async doc => await collection.insert(doc))
           )
         } catch (e) {
           console.error('inserting docs failed', e)
@@ -179,12 +184,27 @@ describe('RxDB Search', () => {
         expect(results.length).toBeGreaterThan(0)
       })
 
-      test('.index()', async () => {
-        try {
-          await collection.index()
-        } catch (e) {
-          expect(e).toBeUndefined()
-        }
+      describe('.index()', () => {
+        test('indexes ALL (when no args)', async () => {
+          try {
+            await collection.index()
+          } catch (e) {
+            expect(e).toBeUndefined()
+          }
+        })
+
+        test('indexes requested', async () => {
+          const { success } = await collection.bulkInsert(
+            data.filter((undefined, i) => i >= 100 && i < 200)
+          )
+          expect(success).toBeDefined()
+          const ids = success.map((undefined, i) => success[i].get('_id'))
+          await collection.index(ids)
+          const word = data[105].description.split(' ')[1]
+
+          const results = await collection.search(word)
+          expect(results.length).toBeGreaterThan(0)
+        })
       })
     })
   })

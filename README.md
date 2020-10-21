@@ -38,7 +38,24 @@ For existing datasets, you can index them by using:
 await collection.index()
 ```
 
-This is a costly operation and it should be done only once. Indexes add themselves up afterwards when new documents are added.
+__This is a costly operation and it should be done only once. Indexes add themselves up afterwards when new documents are added.__
+
+Or index just some of them by providing an ids array argument:
+
+```js
+const ids = ['id1', 'id2']
+await collection.index(ids)
+```
+
+If you're using .bulkInsert(), you may need to "manually" index the inserted documents (the .postInsert hook is not triggered as of now):
+
+```js
+const { success, error } = await collection.bulkInsert(data)
+
+// Get ids, 'success' is an array of maps.
+const ids = success.map((undefined, i) => success[i].get('_id'))
+await collection.index(ids)
+```
 
 `collection.si` can also be accessed for the complete [search-index API](https://github.com/fergiemcdowall/search-index/tree/master/docs) on the collection.
 
