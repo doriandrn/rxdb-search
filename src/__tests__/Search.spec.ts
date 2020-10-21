@@ -1,39 +1,15 @@
-import { RxCollection, isRxDocument, RxDatabase, createRxDatabase, addRxPlugin, RxCollectionCreator } from 'rxdb'
+import { RxCollection, RxDatabase, createRxDatabase, addRxPlugin } from 'rxdb'
 import memoryAdapter from 'pouchdb-adapter-memory'
-import axios from 'axios'
 import BroadcastChannel from 'broadcast-channel'
 
-import Search from './Search'
-import { RxDatabaseBase } from 'rxdb/dist/types/rx-database'
+import Search from '../Search'
+import collectionCreatorFixture from '../__fixtures__/collection.fixture'
+import data from '../__fixtures__'
 
-const type = 'string'
-const date = new Date()
-
-/**
- * Data provided by
- * https://github.com/fergiemcdowall/search-index/blob/master/test/data/naughties.json
- */
-const collectionCreatorFixture = {
-  name: 'naughties' + date.getTime(),
-  schema: {
-    title: 'naughty',
-    version: 0,
-    type: 'object',
-    properties: {
-      date: { type },
-      description: { type },
-      lang: { type },
-      category1: { type },
-      granularity: { type }
-    },
-    indexes: ['lang', 'date']
-  }
-}
 
 describe('RxDB Search', () => {
   let db: RxDatabase
   let collection: RxCollection
-  let data: Object[]
 
   beforeAll(async () => {
     try {
@@ -61,14 +37,6 @@ describe('RxDB Search', () => {
       // collection.searchFields = ['description']
     } catch (e) {
       console.error('could not make collection', e)
-    }
-
-    // Populate with data
-    try {
-      const resp = await axios.get('https://raw.githubusercontent.com/fergiemcdowall/search-index/master/test/data/naughties.json')
-      data = resp.data
-    } catch (e) {
-      console.error('could not fetch data', e)
     }
 
   })
@@ -118,6 +86,8 @@ describe('RxDB Search', () => {
     beforeEach(async () => {
       await db.requestIdlePromise()
     })
+
+
 
     describe('CRUD', () => {
       test('on remove', async () => {
