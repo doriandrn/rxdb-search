@@ -1,4 +1,4 @@
-import commonjs from '@rollup/plugin-commonjs'
+// import commonjs from '@rollup/plugin-commonjs'
 import resolve from 'rollup-plugin-node-resolve'
 import builtins from 'rollup-plugin-node-builtins'
 import globals from 'rollup-plugin-node-globals'
@@ -25,7 +25,8 @@ export default {
     'rxjs',
     'mobx',
     'level',
-    'encoding-down'
+    'encoding-down',
+    'search-index'
   ],
 
   plugins: [
@@ -40,10 +41,10 @@ export default {
 
     babel({ extensions }),
     ts(),
-    commonjs({
-      include: ['node_modules/**/*'],
-      ignore: ["conditional-runtime-dependency"]
-    }),
+    // commonjs({
+    //   include: ['node_modules/**/*'],
+    //   ignore: ["conditional-runtime-dependency"]
+    // }),
     builtins(),
     terser()
   ],

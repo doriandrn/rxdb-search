@@ -2,6 +2,12 @@
 
 Minimal full text search implementation plugin for RxDB based on [search-index](https://github.com/fergiemcdowall/search-index).
 
+
+## Install
+
+```cli
+npm i rxdb-search search-index --save
+```
 ## API
 
 Default usage:
