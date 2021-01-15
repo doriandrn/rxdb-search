@@ -1,3 +1,8 @@
+<a name="1.1.0"></a>
+1.1.0 (2021-01-15)
+
+- Uses search-index v2 API => fixes & updates
+
 <a name="1.0.11"></a>
 1.0.11 (2021-01-15)
 

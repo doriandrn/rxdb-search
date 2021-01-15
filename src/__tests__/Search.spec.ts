@@ -6,6 +6,9 @@ import Search from '../Search'
 import collectionCreatorFixture from '../__fixtures__/collection.fixture'
 import data from '../__fixtures__'
 
+const delay = (value: number) => new Promise(resolve =>
+  setTimeout(() => resolve(), value)
+)
 
 describe('RxDB Search', () => {
   let db: RxDatabase
@@ -32,9 +35,10 @@ describe('RxDB Search', () => {
     }
 
     try {
-      collection = await db.collection(collectionCreatorFixture)
+      await db.addCollections({ naughties: collectionCreatorFixture })
+      await delay(1000)
+      collection = db.collections.naughties
       collection.searchFields.push('description')
-      // collection.searchFields = ['description']
     } catch (e) {
       console.error('could not make collection', e)
     }
@@ -42,6 +46,10 @@ describe('RxDB Search', () => {
   })
 
   describe('Plugin init', () => {
+    beforeAll(async () => {
+      await delay(1000)
+    })
+
     test('.si exists on collection', () => {
       expect(collection.si).toBeDefined()
     })
@@ -86,8 +94,6 @@ describe('RxDB Search', () => {
     beforeEach(async () => {
       await db.requestIdlePromise()
     })
-
-
 
     describe('CRUD', () => {
       test('on remove', async () => {
