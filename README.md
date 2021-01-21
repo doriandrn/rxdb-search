@@ -35,7 +35,6 @@ console.log(RESULT)
 
 const { QUERY } = collection.si
 ```
-`collection.si` can also be accessed
 
 Please consult the [search-index API](https://github.com/fergiemcdowall/search-index/tree/master/docs) for the full operatoins you can do on the collection.
 
