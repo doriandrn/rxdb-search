@@ -58,7 +58,7 @@ describe('RxDB Search', () => {
     })
 
     describe('options', () => {
-      describe('.searchFields', () => {
+      describe('facets', () => {
         const description = 'Fertile grounds above'
         const lang = 'test'
 
@@ -75,15 +75,17 @@ describe('RxDB Search', () => {
           await db.requestIdlePromise()
         })
 
+
         test('has only description field data', async () => {
           const dic = await collection.si.DICTIONARY()
-          expect(dic.length).toEqual(description.split(' ').length)
+          const opts = {
+            FACETS: ['description']
+          }
+          const r = await collection.search(`${dic[0]}`, opts)
+          const r2 = await collection.search(lang, opts)
 
-          const r = await collection.search(`${dic[0]}`)
-          const r2 = await collection.search(lang)
-
-          expect(r.length).toBeGreaterThan(0)
-          expect(r2.length).toEqual(0)
+          expect(r.RESULT_LENGTH).toBeGreaterThan(0)
+          expect(r2.RESULT_LENGTH).toEqual(0)
         })
       })
     })
@@ -97,17 +99,20 @@ describe('RxDB Search', () => {
 
     describe('CRUD', () => {
       test('on remove', async () => {
-        const description = 'wtfyayo'
+        const description = 'wtf yayo 22'
         const doc = await collection.insert({
           date: "2000/01/01",
           description,
           lang: "en",
         })
+        const { _id } = doc
         await doc.remove()
         await db.requestIdlePromise()
-        const r = await collection.search(description)
+        await delay(3000)
+        const { RESULT, RESULT_LENGTH } = await collection.search(description)
 
-        expect(r.length).toEqual(0)
+        expect(RESULT.map(r => r._id).indexOf(_id)).toEqual(-1)
+        expect(RESULT_LENGTH).toEqual(0)
       })
 
       test('on create', async () => {
@@ -121,12 +126,12 @@ describe('RxDB Search', () => {
         await db.requestIdlePromise()
         const r = await collection.search(description)
 
-        expect(r.length).toBeGreaterThan(0)
+        expect(r.RESULT_LENGTH).toBeGreaterThan(0)
       })
 
       test('on update', async () => {
         const description = "blabla"
-        const newDesc = 'xxxooo'
+        const newDesc = 'xxx ooo bbb'
         const doc = await collection.insert(
           {
             date: "2000/01/01",
@@ -137,7 +142,7 @@ describe('RxDB Search', () => {
         await db.requestIdlePromise()
         const r = await collection.search(newDesc)
 
-        expect(r.length).toBeGreaterThan(0)
+        expect(r.RESULT_LENGTH).toEqual(1)
       })
     })
 
@@ -155,9 +160,9 @@ describe('RxDB Search', () => {
       })
 
       test('.search()', async () => {
-        const results = await collection.search('10')
-        expect(results).toBeDefined()
-        expect(results.length).toBeGreaterThan(0)
+        const { RESULT, RESULT_LENGTH } = await collection.search('10')
+        expect( RESULT ).toBeDefined()
+        expect( RESULT_LENGTH ).toBeGreaterThan(0)
       })
 
       describe('.index()', () => {
@@ -178,8 +183,8 @@ describe('RxDB Search', () => {
           await collection.index(ids)
           const word = data[105].description.split(' ')[1]
 
-          const results = await collection.search(word)
-          expect(results.length).toBeGreaterThan(0)
+          const { RESULT_LENGTH } = await collection.search(word)
+          expect( RESULT_LENGTH ).toBeGreaterThan(0)
         })
       })
     })

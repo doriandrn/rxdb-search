@@ -1,6 +1,6 @@
 {
   "name": "rxdb-search",
-  "version": "1.0.11",
+  "version": "1.1.0",
   "description": "RxDB Plugin based on search-index implementation",
   "main": "dist/index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   ],
   "dependencies": {
     "rxdb": "^9.12.0",
-    "search-index": "^2.0.1"
+    "search-index": "^2.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -30,13 +30,13 @@
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-typescript": "^8.1.0",
     "@types/jest": "^26.0.20",
-    "@types/node": "^14.14.21",
+    "@types/node": "^14.14.22",
     "axios": "^0.21.1",
     "broadcast-channel": "^3.3.0",
     "encoding-down": "^6.3.0",
     "jest": "^26.6.3",
     "pouchdb-adapter-memory": "^7.2.2",
-    "rollup": "^2.36.1",
+    "rollup": "^2.37.1",
     "rollup-plugin-browserify-transform": "^1.0.1",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",

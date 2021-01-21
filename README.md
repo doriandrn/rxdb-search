@@ -2,6 +2,9 @@
 
 Minimal full text search implementation plugin for RxDB based on [search-index](https://github.com/fergiemcdowall/search-index).
 
+### Disclaimer for v1.1.0 using search-index v2.1.0
+
+The `on remove` test still fails, meaning the `si.DELETE` function is mishaving -  I'm clueless on how to fix it right now so please expect this to work in a further version!
 
 ## Install
 
@@ -18,25 +21,23 @@ import rxdbSearch from 'rxdb-search'
 
 addRxPlugin(rxdbSearch)
 
-/**
- *  Additionally, you may set collection.searchFields (Array)
- * after initing the collection with your desired fields' keys to
- * search and index on.
- * If left empty (default), all fields are considered.
- *
- *  Note: '_id' or '_rev' fields are not neceessary
- */
-
-collection.searchFields = ['name', 'description']
-
-// or, programatically, you could use .push
-collection.searchFields.push('field')
-
-
 ...
 
-const results = await collection.search(query)
+
+const { RESULT, RESULT_LENGTH } = await collection.search(query: string, siQUERYoptions ?: {})
+console.log(RESULT)
+
+/*
+`collection.search` is just a shortcut / an alias to si.QUERY using just the AND operator, that accepts a string as the `query` parameter.
+
+`collection.si` can also be accessed for the complete [search-index API](https://github.com/fergiemcdowall/search-index/tree/master/docs) on the collection.
+*/
+
+const { QUERY } = collection.si
 ```
+`collection.si` can also be accessed
+
+Please consult the [search-index API](https://github.com/fergiemcdowall/search-index/tree/master/docs) for the full operatoins you can do on the collection.
 
 For existing datasets, you can index them by using:
 
@@ -62,8 +63,6 @@ const { success, error } = await collection.bulkInsert(data)
 const ids = success.map((undefined, i) => success[i].get('_id'))
 await collection.index(ids)
 ```
-
-`collection.si` can also be accessed for the complete [search-index API](https://github.com/fergiemcdowall/search-index/tree/master/docs) on the collection.
 
 More to come soon! Stay tuned!
 

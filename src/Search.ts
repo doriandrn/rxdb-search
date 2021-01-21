@@ -1,4 +1,4 @@
-import { RxCollection, RxDocument } from 'rxdb
+import { RxCollection, RxDocument } from 'rxdb'
 import si from 'search-index'
 
 const filter = (raw: object, allowed: string[]) => {
@@ -17,14 +17,9 @@ export default {
 
   prototypes: {
     RxCollection: (proto: RxCollection) => {
-      proto.search = async function (input : string, opts = { FACETS: proto.searchFields || [] }) {
-        try {
-          return await this.si.QUERY([...(input.split(' '))], opts)
-        } catch (e) {
-          console.error('Error while searching: ', e)
-        } finally {
-          return []
-        }
+      proto.search = function (input : string, opts = { FACETS: proto.searchFields || [] }) {
+        return this.si.QUERY
+          .apply(si.QUERY, [{ AND: [...(input.split(' '))] }, opts])
       }
 
       proto.index = async function (requestedDocs ?: string[]) {
@@ -45,17 +40,17 @@ export default {
   },
 
   hooks: {
-    createRxCollection: async function (col: RxCollection) {
+    createRxCollection: async (col: RxCollection) => {
       await col.$si()
 
       if (!col.searchFields)
         col.searchFields = []
 
-      const { si, searchFields, schema: { primaryPath } } = col
+      const { searchFields, schema: { primaryPath } } = col
 
-      col.postRemove( ({ _id }) => { si.DELETE([ _id ]) }, false )
-      col.postSave( (data) => { si.PUT([ filter(data, [ primaryPath, ...searchFields ]) ]) }, false )
-      col.postInsert( (data) => { si.PUT([ filter(data, [ primaryPath, ...searchFields ]) ]) }, false )
+      col.postRemove(async ({ _id }) => { await col.si.DELETE([ _id ]) }, false )
+      col.postSave( (data) => { col.si.PUT([ filter(data, [ primaryPath, ...searchFields ]) ]) }, false )
+      col.postInsert( (data) => { col.si.PUT([ filter(data, [ primaryPath, ...searchFields ]) ]) }, false )
     }
   }
 }
