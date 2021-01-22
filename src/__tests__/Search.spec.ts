@@ -5,6 +5,7 @@ import BroadcastChannel from 'broadcast-channel'
 import Search from '../Search'
 import collectionCreatorFixture from '../__fixtures__/collection.fixture'
 import data from '../__fixtures__'
+import { rmdir } from 'fs'
 
 const delay = (value: number) => new Promise(resolve =>
   setTimeout(() => resolve(), value)
@@ -35,10 +36,12 @@ describe('RxDB Search', () => {
     }
 
     try {
+      await rmdir('./naughties', { recursive: true }, () => {})
+      await delay(1000)
       await db.addCollections({ naughties: collectionCreatorFixture })
       await delay(1000)
       collection = db.collections.naughties
-      collection.searchFields.push('description')
+      // collection.searchFields.push('description')
     } catch (e) {
       console.error('could not make collection', e)
     }
@@ -108,7 +111,6 @@ describe('RxDB Search', () => {
         const { _id } = doc
         await doc.remove()
         await db.requestIdlePromise()
-        await delay(3000)
         const { RESULT, RESULT_LENGTH } = await collection.search(description)
 
         expect(RESULT.map(r => r._id).indexOf(_id)).toEqual(-1)
@@ -186,6 +188,34 @@ describe('RxDB Search', () => {
           const { RESULT_LENGTH } = await collection.search(word)
           expect( RESULT_LENGTH ).toBeGreaterThan(0)
         })
+      })
+    })
+
+    describe('multiple collections', () => {
+      let col1, col2
+      beforeAll(async () => {
+        await rmdir('./n1', { recursive: true }, () => {})
+        await rmdir('./n2', { recursive: true }, () => {})
+        await db.addCollections({ n1: collectionCreatorFixture, n2: collectionCreatorFixture })
+        await delay(1000)
+        col1 = db.collections.n1
+        col2 = db.collections.n2
+      })
+
+      test('return diferrent entries', async () => {
+        await col1.insert({
+          date: 'asdf',
+          description: 'abgg test',
+          lang: 'xo'
+        })
+        await col2.insert({
+          date: '2021/21/21',
+          description: 'abgg test',
+          lang: 'bb'
+        })
+
+        const r1 = await col1.search('abgg test')
+        expect(r1.RESULT_LENGTH).toEqual(1)
       })
     })
   })

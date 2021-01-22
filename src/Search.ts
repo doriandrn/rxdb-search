@@ -34,6 +34,7 @@ export default {
 
       proto.$si = async function (opts = {}) {
         const { name } = this
+        console.info('N', name)
         proto.si = await si({ name, ...opts })
       }
     }
