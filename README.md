@@ -2,7 +2,7 @@
 
 Minimal full text search implementation plugin for RxDB based on [search-index](https://github.com/fergiemcdowall/search-index).
 
-### Disclaimer for v1.1.0 using search-index v2.1.0
+### Disclaimer for v1.1.0+ using search-index v2.1.0
 
 The `on remove` test still fails, meaning the `si.DELETE` function is mishaving -  I'm clueless on how to fix it right now so please expect this to work in a further version!
 
