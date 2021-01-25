@@ -1,0 +1,15 @@
+.cache/
+.vscode/
+.github/
+src/
+naughties/
+n1/
+n2/
+*.json
+*.code-workspace
+rollup.config.js
+yarn-error.log
+tsconfig.json
+.gitignore
+.babelrc
+jest.config.js
